@@ -4,6 +4,7 @@ import User from "./user";
 const Users = ({users, ...rest}) =>{
   return (
     <>
+    {users.length>0 && (
        <table className="table table-striped">
          <thead>
            <tr>
@@ -17,9 +18,10 @@ const Users = ({users, ...rest}) =>{
           </tr>
          </thead>
          <tbody>
-          {users.map((user) => <User user = {user} onDelete = {rest.onDelete} onToogleBookmark = {rest.onToogleBookmark}/> )}
+            {users.map((user, index) => <User key = {index} {...user} {...rest}/> )}
         </tbody>
       </table>  
+      )}
     </>
   )
 }
