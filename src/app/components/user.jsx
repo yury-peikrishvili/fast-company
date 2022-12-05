@@ -1,6 +1,6 @@
 import React from "react";
 import Qualitie from "./qualitie";
-import Bookmark from "./bookmark";
+import BookMark from "./bookmark";
 import PropTypes from "prop-types";
 
 const User = (user) => {
@@ -20,7 +20,7 @@ const User = (user) => {
             <td>{user.completedMeetings}</td>
             <td>{user.rate}</td>
             <td>
-                <Bookmark
+                <BookMark
                     status={user.bookmark}
                     onToogleBookmark={user.onToogleBookmark}
                     id={user._id}
@@ -39,8 +39,9 @@ const User = (user) => {
 };
 User.protoTypes = {
     _id: PropTypes.string.isRequired,
-    users: PropTypes.array.isRequired,
-    bookmark: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired,
+    qualities: PropTypes.array,
+    bookmark: PropTypes.bool,
     onDelete: PropTypes.func.isRequired,
     onToogleBookmark: PropTypes.func.isRequired,
     profession: PropTypes.object.isRequired,

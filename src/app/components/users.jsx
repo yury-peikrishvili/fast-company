@@ -44,10 +44,9 @@ const Users = ({ users, ...rest }) => {
         </>
     );
 };
+
 Users.propTypes = {
-    users: PropTypes.array.isRequired,
-    onDelete: PropTypes.func.isRequired,
-    onToogleBookmark: PropTypes.func.isRequired
+    users: PropTypes.array
 };
 
 export default Users;
