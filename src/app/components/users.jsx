@@ -1,47 +1,90 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { paginate } from "../utils/paginate";
 import Pagination from "./pagination";
 import User from "./user";
 import PropTypes from "prop-types";
+import GroupList from "./groupList";
+import api from "../api";
+import SearchStatus from "./searchStatus";
 
-const Users = ({ users, ...rest }) => {
-    const count = users.length;
-    const pageSize = 4;
-    const [currentPage, serCurrentPage] = useState(1);
+const Users = ({ users: allUsers, ...rest }) => {
+    const pageSize = 2;
+    const [professions, setProfessions] = useState(api.professions.fetchAll());
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedProf, setselectedProf] = useState();
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedProf]);
+
+    useEffect(() => {
+        api.professions.fetchAll().then((data) => setProfessions(data));
+    }, []);
+
     const handlePageChange = (pageIndex) => {
-        serCurrentPage(pageIndex);
+        setCurrentPage(pageIndex);
+    };
+    const handleProfessionSelect = (item) => {
+        setselectedProf(item);
+    };
+    const filteredUsers = selectedProf
+        ? allUsers.filter((user) => user.profession === selectedProf)
+        : allUsers;
+    const count = filteredUsers.length;
+    const userCrop = paginate(filteredUsers, currentPage, pageSize);
+
+    const clearFilter = () => {
+        setselectedProf();
     };
 
-    const userCrop = paginate(users, currentPage, pageSize);
     return (
-        <>
-            {count > 0 && (
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Имя</th>
-                            <th scope="col">Качества</th>
-                            <th scope="col">Профессия</th>
-                            <th scope="col">Встретился, раз</th>
-                            <th scope="col">Оценка</th>
-                            <th scope="col">Избранное</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {userCrop.map((user) => (
-                            <User key={user._id} {...user} {...rest} />
-                        ))}
-                    </tbody>
-                </table>
+        <div className="d-flex">
+            {professions && (
+                <div className="d-flex flex-column flex-shrink-0 p-3">
+                    <GroupList
+                        selectedItem={selectedProf}
+                        items={professions}
+                        onItemSelect={handleProfessionSelect}
+                    />
+                    <button
+                        className="btn btn-secondary mt-2"
+                        onClick={clearFilter}
+                    >
+                        Очистить
+                    </button>
+                </div>
             )}
-            <Pagination
-                itemsCount={count}
-                currentPage={currentPage}
-                pageSize={pageSize}
-                onPageChange={handlePageChange}
-            />
-        </>
+            <div className="d-flex flex-column">
+                <SearchStatus length={count} />
+                {count > 0 && (
+                    <table className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Имя</th>
+                                <th scope="col">Качества</th>
+                                <th scope="col">Профессия</th>
+                                <th scope="col">Встретился, раз</th>
+                                <th scope="col">Оценка</th>
+                                <th scope="col">Избранное</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {userCrop.map((user) => (
+                                <User key={user._id} {...user} {...rest} />
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+                <div className="d-flex justify-content-center">
+                    <Pagination
+                        itemsCount={count}
+                        currentPage={currentPage}
+                        pageSize={pageSize}
+                        onPageChange={handlePageChange}
+                    />
+                </div>
+            </div>
+        </div>
     );
 };
 

@@ -11,7 +11,7 @@ const BookMark = ({ status, ...rest }) => {
     );
 };
 
-BookMmark.propTypes = {
+BookMark.propTypes = {
     status: PropTypes.bool
 };
 
