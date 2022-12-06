@@ -11,7 +11,7 @@ const Users = ({ users: allUsers, ...rest }) => {
     const pageSize = 2;
     const [professions, setProfessions] = useState(api.professions.fetchAll());
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedProf, setselectedProf] = useState();
+    const [selectedProf, setSelectedProf] = useState();
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedProf]);
@@ -24,16 +24,21 @@ const Users = ({ users: allUsers, ...rest }) => {
         setCurrentPage(pageIndex);
     };
     const handleProfessionSelect = (item) => {
-        setselectedProf(item);
+        setSelectedProf(Object.assign(item));
     };
+
+    const allUsersArray = Object.assign(allUsers);
+
     const filteredUsers = selectedProf
-        ? allUsers.filter((user) => user.profession === selectedProf)
-        : allUsers;
+        ? allUsersArray.filter(
+              (user) => user.profession.name === selectedProf.name
+          )
+        : Object.assign(allUsers);
     const count = filteredUsers.length;
     const userCrop = paginate(filteredUsers, currentPage, pageSize);
 
     const clearFilter = () => {
-        setselectedProf();
+        setSelectedProf();
     };
 
     return (
