@@ -5,7 +5,7 @@ import api from "./api";
 
 function App() {
     const [users, setUsers] = useState();
-    console.log(api.users);
+
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(Object.assign(data)));
     }, []);

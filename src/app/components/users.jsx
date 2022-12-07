@@ -20,6 +20,12 @@ const Users = ({ users: allUsers, ...rest }) => {
         api.professions.fetchAll().then((data) => setProfessions(data));
     }, []);
 
+    useEffect(() => {
+        if (userCrop.length === 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    }, [allUsers]);
+
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
