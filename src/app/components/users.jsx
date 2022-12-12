@@ -1,48 +1,47 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { paginate } from "../utils/paginate";
 import Pagination from "./pagination";
 import User from "./user";
-import PropTypes from "prop-types";
-import GroupList from "./groupList";
 import api from "../api";
+import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
-
 const Users = ({ users: allUsers, ...rest }) => {
-    const pageSize = 2;
-    const [professions, setProfessions] = useState(api.professions.fetchAll());
     const [currentPage, setCurrentPage] = useState(1);
+    const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
+
+    const pageSize = 2;
+    useEffect(() => {
+        api.professions.fetchAll().then((data) => setProfession(data));
+    }, []);
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedProf]);
 
     useEffect(() => {
-        api.professions.fetchAll().then((data) => setProfessions(data));
-    }, []);
-
-    useEffect(() => {
-        if (userCrop.length === 0) {
+        if (usersCrop.length === 0) {
             setCurrentPage(currentPage - 1);
         }
     }, [allUsers]);
 
+    const handleProfessionSelect = (item) => {
+        setSelectedProf(item);
+    };
+
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
-    const handleProfessionSelect = (item) => {
-        setSelectedProf(Object.assign(item));
-    };
-
-    const allUsersArray = Object.assign(allUsers);
-
     const filteredUsers = selectedProf
-        ? allUsersArray.filter(
-              (user) => user.profession.name === selectedProf.name
+        ? allUsers.filter(
+              (user) =>
+                  JSON.stringify(user.profession) ===
+                  JSON.stringify(selectedProf)
           )
-        : Object.assign(allUsers);
-    const count = filteredUsers.length;
-    const userCrop = paginate(filteredUsers, currentPage, pageSize);
+        : allUsers;
 
+    const count = filteredUsers.length;
+    const usersCrop = paginate(filteredUsers, currentPage, pageSize);
     const clearFilter = () => {
         setSelectedProf();
     };
@@ -60,6 +59,7 @@ const Users = ({ users: allUsers, ...rest }) => {
                         className="btn btn-secondary mt-2"
                         onClick={clearFilter}
                     >
+                        {" "}
                         Очистить
                     </button>
                 </div>
@@ -67,7 +67,7 @@ const Users = ({ users: allUsers, ...rest }) => {
             <div className="d-flex flex-column">
                 <SearchStatus length={count} />
                 {count > 0 && (
-                    <table className="table table-striped">
+                    <table className="table">
                         <thead>
                             <tr>
                                 <th scope="col">Имя</th>
@@ -76,12 +76,12 @@ const Users = ({ users: allUsers, ...rest }) => {
                                 <th scope="col">Встретился, раз</th>
                                 <th scope="col">Оценка</th>
                                 <th scope="col">Избранное</th>
-                                <th scope="col"></th>
+                                <th />
                             </tr>
                         </thead>
                         <tbody>
-                            {userCrop.map((user) => (
-                                <User key={user._id} {...user} {...rest} />
+                            {usersCrop.map((user) => (
+                                <User {...rest} {...user} key={user._id} />
                             ))}
                         </tbody>
                     </table>
@@ -89,8 +89,8 @@ const Users = ({ users: allUsers, ...rest }) => {
                 <div className="d-flex justify-content-center">
                     <Pagination
                         itemsCount={count}
-                        currentPage={currentPage}
                         pageSize={pageSize}
+                        currentPage={currentPage}
                         onPageChange={handlePageChange}
                     />
                 </div>
@@ -98,7 +98,6 @@ const Users = ({ users: allUsers, ...rest }) => {
         </div>
     );
 };
-
 Users.propTypes = {
     users: PropTypes.array
 };
