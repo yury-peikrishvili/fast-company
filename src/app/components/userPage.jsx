@@ -1,31 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import api from "../api";
-import QualitiesList from "./quilitiesList";
-import { Link } from "react-router-dom";
+import QualitiesList from "./qualitiesList";
+import { useHistory } from "react-router-dom";
 
-const userPage = ({ match }) => {
+const UserPage = ({ userId }) => {
+    const history = useHistory();
     const [user, setUser] = useState();
     useEffect(() => {
-        api.users.getById(match.params.userId).then((data) => setUser(data));
-    }, []);
-
+        api.users.getById(userId).then((data) => setUser(data));
+    });
+    const handleClick = () => {
+        history.push("/users");
+    };
     if (user) {
         return (
-            <div className="p-3">
-                <h1>{user.name}</h1>
-                <h1>Профессия: {user.profession.name}</h1>
-                <QualitiesList qualities={user.qualities} />,
+            <div>
+                <h1> {user.name}</h1>
+                <h2>Профессия: {user.profession.name}</h2>
+                <QualitiesList qualities={user.qualities} />
                 <p>completedMeetings: {user.completedMeetings}</p>
-                <p>rate: {user.rate}</p>
-                {/* <button className="btn btn-secondary mt-2"> */}
-                <Link className="btn btn-secondary mt-2" to={"/users/"}>
-                    все пользователи
-                </Link>
-                {/* </button> */}
+                <h2>Rate: {user.rate}</h2>
+                <button onClick={handleClick}> Все Пользователи</button>
             </div>
         );
+    } else {
+        return <h1>Loading</h1>;
     }
-    return <div className="p-3">loading</div>;
 };
 
-export default userPage;
+UserPage.propTypes = {
+    userId: PropTypes.string.isRequired
+};
+
+export default UserPage;
