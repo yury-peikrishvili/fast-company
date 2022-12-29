@@ -5,12 +5,15 @@ import Pagination from "./pagination";
 import api from "../api";
 import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
+import SearchBar from "./searchBar";
 import UserTable from "./usersTable";
 import _ from "lodash";
+
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [searchValue, setSearchValue] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const pageSize = 8;
 
@@ -41,6 +44,12 @@ const UsersList = () => {
 
     const handleProfessionSelect = (item) => {
         setSelectedProf(item);
+        setSearchValue("");
+    };
+
+    const handleSearchChange = (item) => {
+        setSearchValue(item.target.value);
+        setSelectedProf();
     };
 
     const handlePageChange = (pageIndex) => {
@@ -51,13 +60,21 @@ const UsersList = () => {
     };
 
     if (users) {
-        const filteredUsers = selectedProf
+        let filteredUsers = selectedProf
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
                       JSON.stringify(selectedProf)
               )
             : users;
+
+        filteredUsers = searchValue
+            ? users.filter((user) =>
+                  JSON.stringify(user.name.toLowerCase()).includes(
+                      searchValue.toLowerCase()
+                  )
+              )
+            : filteredUsers;
 
         const count = filteredUsers.length;
         const sortedUsers = _.orderBy(
@@ -90,6 +107,10 @@ const UsersList = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <SearchBar
+                        onSearchChange={handleSearchChange}
+                        search={searchValue}
+                    />
                     {count > 0 && (
                         <UserTable
                             users={usersCrop}
