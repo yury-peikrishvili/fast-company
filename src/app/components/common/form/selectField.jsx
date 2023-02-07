@@ -56,8 +56,7 @@ SelectField.propTypes = {
     onChange: PropTypes.func,
     error: PropTypes.string,
     options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-    name: PropTypes.string,
-    defaultValue: PropTypes.string
+    name: PropTypes.string
 };
 
 export default SelectField;

@@ -174,7 +174,7 @@ const fetchAll = () =>
     new Promise((resolve) => {
         window.setTimeout(function () {
             resolve(JSON.parse(localStorage.getItem("users")));
-        }, 500);
+        }, 2000);
     });
 const update = (id, data) =>
     new Promise((resolve) => {
@@ -193,7 +193,7 @@ const getById = (id) =>
                     (user) => user._id === id
                 )
             );
-        }, 500);
+        }, 1000);
     });
 export default {
     fetchAll,
